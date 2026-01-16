@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Cinematic dark base colors */
+    --background: 0 0% 4%;
+    --foreground: 45 15% 95%;
+
+    --card: 0 0% 8%;
+    --card-foreground: 45 15% 95%;
+
+    --popover: 0 0% 6%;
+    --popover-foreground: 45 15% 95%;
+
+    /* Gold accent colors */
+    --primary: 45 85% 55%;
+    --primary-foreground: 0 0% 10%;
+
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 45 15% 95%;
+
+    --muted: 0 0% 12%;
+    --muted-foreground: 45 8% 65%;
+
+    --accent: 45 75% 45%;
+    --accent-foreground: 0 0% 10%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 45 15% 95%;
+
+    --border: 0 0% 18%;
+    --input: 0 0% 18%;
+    --ring: 45 85% 55%;
+
+    --radius: 0.75rem;
+
+    /* Cinematic gradients */
+    --gradient-gold: linear-gradient(
+      135deg,
+      hsl(45, 85%, 55%),
+      hsl(45, 75%, 45%)
+    );
+    --gradient-dark: linear-gradient(180deg, hsl(0, 0%, 4%), hsl(0, 0%, 8%));
+    --gradient-overlay: linear-gradient(
+      180deg,
+      rgba(0, 0, 0, 0.8),
+      rgba(0, 0, 0, 0.4)
+    );
+
+    /* Cinematic shadows */
+    --shadow-glow: 0 0 40px hsla(45, 85%, 55%, 0.3);
+    --shadow-deep: 0 20px 60px rgba(0, 0, 0, 0.7);
+
+    /* Transitions */
+    --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: "Inter", sans-serif;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Playfair Display", serif;
+  }
+}
+html {
+  scroll-padding-top: 80px; /* Adjust based on your nav height */
+}
+
+/* Ensure proper spacing for all sections */
+section {
+  scroll-margin-top: 80px;
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+@layer utilities {
+  /* Film grain effect */
+  .film-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.15'/%3E%3C/svg%3E");
+    pointer-events: none;
+    opacity: 0.03;
+    z-index: 1;
+  }
+
+  /* Cinematic text styles */
+  .text-cinematic-gold {
+    background: linear-gradient(135deg, hsl(45, 85%, 65%), hsl(45, 75%, 50%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Smooth scroll */
+  .smooth-scroll {
+    scroll-behavior: smooth;
+  }
+
+  /* Parallax container */
+  .parallax {
+    transform: translateZ(0);
+    will-change: transform;
+  }
+}
