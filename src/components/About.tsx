@@ -96,7 +96,7 @@ const About = () => {
 
   // 2. DEFINED PROFESSIONS DATA
   const professions = [
-    { label: "Cinematographer", icon: Film },
+    { label: "Cinematographer", icon: Aperture },
     { label: "Video Editor", icon: Clapperboard },
     { label: "Graphics Designer", icon: PenTool },
     { label: "Content Creator", icon: Smartphone },

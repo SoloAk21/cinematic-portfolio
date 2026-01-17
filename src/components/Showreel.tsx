@@ -20,9 +20,12 @@ import {
   FileText,
 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+
+// Replace these imports with your actual image paths
 import project1 from "@/assets/project1.jpg";
-import project2 from "@/assets/project2.jpg";
-import project3 from "@/assets/project3.jpg";
+import project2 from "@/assets/project2.jpeg";
+import project3 from "@/assets/project3.jpeg";
+import project4 from "@/assets/project4.png";
 
 interface Project {
   id: number;
@@ -31,25 +34,34 @@ interface Project {
   image: any;
   description: string;
   videoUrl: string;
+  videoPlatform?: "youtube" | "tiktok" | "none";
   pdfUrl?: string;
   duration?: string;
   tags: string[];
 }
 
-const categories = ["All", "Commercial", "Documentary", "Graphic Design"];
+const categories = [
+  "All",
+  "Commercial",
+  "Documentary",
+  "Promotional",
+  "Graphic Design",
+];
 
 const projects: Project[] = [
   {
     id: 1,
-    title: "The Choice",
-    category: "Commercial",
+    title: "Company Profile",
+    category: "Documentary",
     image: project1,
     description:
-      "You might not be able to choose your daughter's boyfriend, but you can choose your table.",
-    videoUrl: "",
-    duration: "0:46",
-    tags: ["Comedy", "Storytelling", "Brand"],
+      "36 years of craftsmanship, comfort, and timeless furniture design built for homes, offices, and generations.",
+    videoUrl: "https://www.youtube.com/embed/LTiIC6xnKy4",
+    videoPlatform: "youtube",
+    duration: "3:26",
+    tags: ["Company Profile", "Brand Story", "36 Years"],
   },
+
   {
     id: 2,
     title: "Generations of Comfort",
@@ -57,34 +69,52 @@ const projects: Project[] = [
     image: project2,
     description:
       "Furniture becomes the backdrop for cherished family memories, honoring 30 years of comfort.",
-    videoUrl: "",
+    videoUrl: "https://www.youtube.com/embed/KUYCEMLSqYg",
+    videoPlatform: "youtube",
     pdfUrl: "/generations-proposal.pdf",
     duration: "1:30",
     tags: ["Storytelling", "Family", "Legacy"],
   },
+
   {
     id: 3,
-    title: "Live Simple",
-    category: "Commercial",
+    title: "Daily Water Giveaway",
+    category: "Promotional",
     image: project3,
     description:
-      "A narrative commercial following a stylish family upgrading their home and office lifestyle.",
-    videoUrl: "",
+      "Exciting moments from Daily Water’s giveaway event, celebrating and rewarding our customers.",
+    videoUrl: "https://www.youtube.com/embed/k1dxutyil98",
+    videoPlatform: "youtube",
     duration: "1:00",
-    tags: ["Lifestyle", "Furniture", "Narrative"],
+    tags: ["Daily Water", "Giveaway", "Promotion", "Event Highlights"],
   },
-  // 4. UPDATED: Details from the Or Tewahedo video analysis
+
+  // Example TikTok project – REPLACE videoUrl with real embed URL
   {
     id: 4,
-    title: "The Homecoming",
-    category: "Documentary",
-    image: project2, // You can switch this to a relevant image if available
+    title: "Showroom Showcase",
+    category: "Commercial",
+    image: project4,
     description:
-      "A promotional teaser revealing the heartbreaking journey and return of an exiled gospel singer after 21 years.",
-    videoUrl: "",
-    duration: "0:52",
-    tags: ["Teaser", "Emotional", "True Story"],
+      "A quick tour of our showroom, highlighting featured furniture pieces.",
+    videoUrl: "https://www.tiktok.com/embed/v2/7496900746877717766",
+    videoPlatform: "tiktok",
+    duration: "0:45",
+    tags: ["TikTok", "Showroom", "Furniture", "Brand Experience"],
   },
+
+  // You can add more TikTok videos the same way
+  // {
+  //   id: 5,
+  //   title: "Another TikTok Clip",
+  //   category: "Commercial",
+  //   image: project2,
+  //   description: "...",
+  //   videoUrl: "https://www.tiktok.com/embed/v2/ANOTHER_VIDEO_ID",
+  //   videoPlatform: "tiktok",
+  //   duration: "0:32",
+  //   tags: ["TikTok", "Promotion"],
+  // },
 ];
 
 const Showreel = () => {
@@ -111,14 +141,17 @@ const Showreel = () => {
       ? projects
       : projects.filter((project) => project.category === selectedCategory);
 
-  const handleMouseMove = useCallback((event: React.MouseEvent) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = ((event.clientX - rect.left) / rect.width) * 100;
-    const y = ((event.clientY - rect.top) / rect.height) * 100;
-    mouseX.set(x);
-    mouseY.set(y);
-  }, []);
+  const handleMouseMove = useCallback(
+    (event: React.MouseEvent) => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      mouseX.set(x);
+      mouseY.set(y);
+    },
+    [mouseX, mouseY],
+  );
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -330,8 +363,8 @@ const Showreel = () => {
                       alt={selectedProject.title}
                       className="h-full w-auto object-contain max-h-[80vh]"
                     />
-                  ) : (
-                    // Video Player
+                  ) : selectedProject.videoPlatform === "youtube" ? (
+                    // YouTube
                     <iframe
                       width="100%"
                       height="100%"
@@ -341,6 +374,22 @@ const Showreel = () => {
                       allowFullScreen
                       className="rounded-t-lg"
                     />
+                  ) : selectedProject.videoPlatform === "tiktok" ? (
+                    // TikTok
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      src={selectedProject.videoUrl}
+                      title={selectedProject.title}
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="rounded-t-lg"
+                    />
+                  ) : (
+                    // Fallback
+                    <div className="text-white flex items-center justify-center h-full">
+                      No video available
+                    </div>
                   )}
                 </div>
 
@@ -363,7 +412,6 @@ const Showreel = () => {
                       ))}
                     </div>
 
-                    {/* PDF Download/View Button */}
                     {selectedProject.pdfUrl && (
                       <div className="pt-4">
                         <a
