@@ -22,7 +22,7 @@ import {
   Clock,
 } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
-import bts1 from "@/assets/bts1.jpg";
+import bts1 from "@/assets/bts1.jpeg";
 import bts2 from "@/assets/bts2.jpg";
 import bts3 from "@/assets/bts3.jpg";
 
@@ -46,15 +46,20 @@ const btsImages: BTSItem[] = [
     category: "Cinematography",
     icon: Camera,
     duration: "8 Hours",
-    equipment: ["ARRI ALEXA Mini", "Cooke S4 Lenses", "HMI Lighting"],
+    equipment: [
+      "Sony FX3 Cinema Line",
+      "DJI Ronin Gimbal",
+      "G-Master Lens",
+      "Softbox Dome Light",
+    ],
     description:
-      "Professional cinema camera setup with advanced lighting techniques for dramatic visual storytelling",
+      "Professional cinematographer operating a rigged Sony FX3 on a gimbal in a modern studio, cinematic lighting and composition",
     stats: [
-      { label: "Camera", value: "ARRI ALEXA" },
-      { label: "Lens", value: "Cooke S4" },
-      { label: "ISO", value: "800" },
+      { label: "Camera", value: "Sony FX3" },
+      { label: "Lens", value: "G-Master Prime" },
     ],
   },
+
   {
     id: 2,
     image: bts2,

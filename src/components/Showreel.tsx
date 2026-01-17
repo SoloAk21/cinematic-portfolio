@@ -45,7 +45,7 @@ const categories = [
   "Commercial",
   "Documentary",
   "Promotional",
-  "Graphic Design",
+  // "Graphic Design",
 ];
 
 const projects: Project[] = [

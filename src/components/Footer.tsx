@@ -67,7 +67,7 @@ const Footer = () => {
                 className="text-foreground hover:text-primary transition-colors text-lg font-light flex items-center gap-2"
               >
                 <Mail className="w-4 h-4" />
-                hello@nigusdawit.com
+                kingdav818@gmail.com
               </a>
             </motion.div>
           </div>

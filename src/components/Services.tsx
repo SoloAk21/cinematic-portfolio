@@ -26,7 +26,7 @@ import { Button } from "@/components/ui/button";
 const services = [
   {
     icon: Camera,
-    title: "Cinematography/DP",
+    title: "Cinematography",
     description:
       "Professional camera operation and visual storytelling for commercials, music videos, and films",
   },
