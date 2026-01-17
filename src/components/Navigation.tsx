@@ -33,7 +33,7 @@ interface Particle {
 // Debounce utility
 const debounce = <T extends (...args: any[]) => void>(
   func: T,
-  wait: number
+  wait: number,
 ): ((...args: Parameters<T>) => void) => {
   let timeout: NodeJS.Timeout;
   return (...args: Parameters<T>) => {
@@ -66,9 +66,9 @@ const Navigation = () => {
   const cursorY = useSpring(mouseY, { damping: 30, stiffness: 400 });
 
   const navLinks: NavLink[] = [
-    { name: "Showreel", href: "#showreel", icon: Play },
-    { name: "Work", href: "#work", icon: Video },
     { name: "About", href: "#about", icon: Camera },
+    { name: "Showreel", href: "#showreel", icon: Play },
+    { name: "Services", href: "#services", icon: Video },
     { name: "Contact", href: "#contact", icon: Mail },
   ];
 
@@ -110,24 +110,70 @@ const Navigation = () => {
       mouseX.set(x * 100);
       mouseY.set(y * 100);
     }, 16),
-    [isTouchDevice]
+    [isTouchDevice],
   );
 
-  // Enhanced scroll to section with offset
+  // Fixed scroll to section function
   const scrollToSection = useCallback((href: string) => {
+    // Prevent default behavior for hash links
     const element = document.querySelector(href);
     if (element) {
+      // Calculate the exact scroll position
+      const elementRect = element.getBoundingClientRect();
+      const absoluteElementTop = elementRect.top + window.pageYOffset;
       const navHeight = navRef.current?.offsetHeight || 0;
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - navHeight;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: "smooth",
-      });
+      // Calculate the target scroll position
+      const targetScrollPosition = absoluteElementTop - navHeight;
+
+      // Use requestAnimationFrame for smooth scrolling
+      const startPosition = window.pageYOffset;
+      const distance = targetScrollPosition - startPosition;
+      const duration = 800; // ms
+      let startTime: number | null = null;
+
+      const animateScroll = (currentTime: number) => {
+        if (startTime === null) startTime = currentTime;
+        const timeElapsed = currentTime - startTime;
+        const progress = Math.min(timeElapsed / duration, 1);
+
+        // Easing function (easeInOutCubic)
+        const easeInOutCubic = (t: number) =>
+          t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+        const easedProgress = easeInOutCubic(progress);
+        window.scrollTo(0, startPosition + distance * easedProgress);
+
+        if (timeElapsed < duration) {
+          requestAnimationFrame(animateScroll);
+        }
+      };
+
+      requestAnimationFrame(animateScroll);
     }
+
+    // Close mobile menu if open
     setIsMobileMenuOpen(false);
   }, []);
+
+  // Handle hash link clicks
+  useEffect(() => {
+    const handleHashClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest('a[href^="#"]');
+
+      if (anchor) {
+        e.preventDefault();
+        const href = anchor.getAttribute("href");
+        if (href && href !== "#") {
+          scrollToSection(href);
+        }
+      }
+    };
+
+    document.addEventListener("click", handleHashClick);
+    return () => document.removeEventListener("click", handleHashClick);
+  }, [scrollToSection]);
 
   // Keyboard navigation handler
   const handleKeyDown = useCallback(
@@ -137,7 +183,7 @@ const Navigation = () => {
         scrollToSection(href);
       }
     },
-    [scrollToSection]
+    [scrollToSection],
   );
 
   // Enhanced animations

@@ -9,7 +9,7 @@ import {
   useMotionTemplate,
   AnimatePresence,
 } from "framer-motion";
-import { useRef, useState, useCallback } from "react";
+import { useRef, useState, useCallback, useEffect } from "react";
 import { useInView } from "framer-motion";
 import {
   Play,
@@ -61,7 +61,6 @@ const projects: Project[] = [
     duration: "3:26",
     tags: ["Company Profile", "Brand Story", "36 Years"],
   },
-
   {
     id: 2,
     title: "Generations of Comfort",
@@ -75,21 +74,18 @@ const projects: Project[] = [
     duration: "1:30",
     tags: ["Storytelling", "Family", "Legacy"],
   },
-
   {
     id: 3,
     title: "Daily Water Giveaway",
     category: "Promotional",
     image: project3,
     description:
-      "Exciting moments from Daily Water’s giveaway event, celebrating and rewarding our customers.",
+      "Exciting moments from Daily Water's giveaway event, celebrating and rewarding our customers.",
     videoUrl: "https://www.youtube.com/embed/k1dxutyil98",
     videoPlatform: "youtube",
     duration: "1:00",
     tags: ["Daily Water", "Giveaway", "Promotion", "Event Highlights"],
   },
-
-  // Example TikTok project – REPLACE videoUrl with real embed URL
   {
     id: 4,
     title: "Showroom Showcase",
@@ -102,19 +98,6 @@ const projects: Project[] = [
     duration: "0:45",
     tags: ["TikTok", "Showroom", "Furniture", "Brand Experience"],
   },
-
-  // You can add more TikTok videos the same way
-  // {
-  //   id: 5,
-  //   title: "Another TikTok Clip",
-  //   category: "Commercial",
-  //   image: project2,
-  //   description: "...",
-  //   videoUrl: "https://www.tiktok.com/embed/v2/ANOTHER_VIDEO_ID",
-  //   videoPlatform: "tiktok",
-  //   duration: "0:32",
-  //   tags: ["TikTok", "Promotion"],
-  // },
 ];
 
 const Showreel = () => {
@@ -135,6 +118,9 @@ const Showreel = () => {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [hoveredProject, setHoveredProject] = useState<number | null>(null);
+  const [isImageLoaded, setIsImageLoaded] = useState<Record<number, boolean>>(
+    {},
+  );
 
   const filteredProjects =
     selectedCategory === "All"
@@ -152,6 +138,10 @@ const Showreel = () => {
     },
     [mouseX, mouseY],
   );
+
+  const handleImageLoad = useCallback((id: number) => {
+    setIsImageLoaded((prev) => ({ ...prev, [id]: true }));
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -270,68 +260,187 @@ const Showreel = () => {
             >
               <div className="relative overflow-hidden rounded-xl bg-background/50 backdrop-blur-sm border border-primary/10 group-hover:border-primary/30 transition-all duration-300">
                 <div className="relative aspect-video overflow-hidden">
-                  <motion.img
-                    src={project.image.src || project.image}
-                    alt={project.title}
-                    className="w-full h-full object-cover"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ duration: 0.6 }}
-                  />
+                  {/* Golden effect container */}
+                  <div className="relative w-full h-full">
+                    {/* Original image with golden filter when not hovered */}
+                    <motion.img
+                      src={project.image.src || project.image}
+                      alt={project.title}
+                      className={`w-full h-full object-cover transition-all duration-500 ${
+                        hoveredProject === project.id
+                          ? "filter-none"
+                          : "filter sepia-[.6] saturate-[2] hue-rotate-[5deg] contrast-[1.1] brightness-[1.1]"
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.6 }}
+                      onLoad={() => handleImageLoad(project.id)}
+                      style={{
+                        opacity: isImageLoaded[project.id] ? 1 : 0,
+                        transition: "opacity 0.3s ease-in-out",
+                      }}
+                    />
+
+                    {/* Loading placeholder */}
+                    {!isImageLoaded[project.id] && (
+                      <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-primary/10 animate-pulse" />
+                    )}
+
+                    {/* Golden overlay for enhanced effect */}
+                    <motion.div
+                      className="absolute inset-0 mix-blend-overlay pointer-events-none"
+                      initial={{ opacity: 0.3 }}
+                      animate={{
+                        opacity: hoveredProject === project.id ? 0 : 0.3,
+                        background:
+                          hoveredProject === project.id
+                            ? "transparent"
+                            : "linear-gradient(45deg, rgba(212,175,55,0.3) 0%, rgba(255,215,0,0.2) 50%, transparent 100%)",
+                      }}
+                      transition={{ duration: 0.4 }}
+                    />
+
+                    {/* Subtle golden shimmer effect */}
+                    <motion.div
+                      className="absolute inset-0 pointer-events-none"
+                      animate={{
+                        background: [
+                          "linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.05) 50%, transparent 100%)",
+                          "linear-gradient(90deg, transparent 0%, rgba(212,175,55,0.1) 50%, transparent 100%)",
+                          "linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.05) 50%, transparent 100%)",
+                        ],
+                      }}
+                      transition={{
+                        duration: 3,
+                        repeat: Infinity,
+                        repeatType: "reverse",
+                      }}
+                      style={{
+                        opacity: hoveredProject === project.id ? 0 : 0.5,
+                      }}
+                    />
+                  </div>
 
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
 
                   {/* Category Badge */}
                   <div className="absolute top-3 left-3">
-                    <span className="bg-black/60 backdrop-blur-md rounded px-2 py-1 text-[10px] uppercase tracking-wider font-medium text-white border border-white/10">
+                    <motion.span
+                      className="bg-black/60 backdrop-blur-md rounded px-2 py-1 text-[10px] uppercase tracking-wider font-medium text-white border border-white/10"
+                      whileHover={{ scale: 1.05 }}
+                      transition={{ duration: 0.2 }}
+                    >
                       {project.category}
-                    </span>
+                    </motion.span>
                   </div>
 
                   {/* Duration (Only for videos) */}
                   {project.category !== "Graphic Design" &&
                     project.duration && (
                       <div className="absolute top-3 right-3">
-                        <div className="flex items-center gap-1 bg-black/60 backdrop-blur-md rounded px-2 py-1 border border-white/10">
+                        <motion.div
+                          className="flex items-center gap-1 bg-black/60 backdrop-blur-md rounded px-2 py-1 border border-white/10"
+                          whileHover={{ scale: 1.05 }}
+                          transition={{ duration: 0.2 }}
+                        >
                           <Clock className="h-3 w-3 text-white/80" />
                           <span className="text-[10px] text-white/90 font-medium">
                             {project.duration}
                           </span>
-                        </div>
+                        </motion.div>
                       </div>
                     )}
 
-                  {/* Center Icon */}
+                  {/* Center Icon with golden effect */}
                   <motion.div
                     className="absolute inset-0 flex items-center justify-center"
-                    initial={{ opacity: 0, scale: 0.8 }}
+                    initial={{ opacity: 0.8, scale: 0.9 }}
                     whileHover={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.2 }}
+                    transition={{ duration: 0.3 }}
                   >
-                    <div className="w-12 h-12 rounded-full bg-primary/90 flex items-center justify-center shadow-lg border border-white/20 backdrop-blur-sm">
-                      {project.category === "Graphic Design" ? (
-                        <Eye className="w-5 h-5 text-primary-foreground" />
-                      ) : (
-                        <Play className="w-5 h-5 text-primary-foreground ml-0.5" />
-                      )}
+                    <div className="relative">
+                      {/* Icon glow effect */}
+                      <motion.div
+                        className="absolute -inset-4 bg-gradient-to-r from-primary/30 to-yellow-500/30 rounded-full blur-lg opacity-0 group-hover:opacity-100"
+                        animate={{
+                          scale: [1, 1.2, 1],
+                          opacity: [0, 0.5, 0],
+                        }}
+                        transition={{
+                          duration: 2,
+                          repeat: Infinity,
+                          repeatType: "reverse",
+                        }}
+                      />
+
+                      {/* Icon container */}
+                      <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-primary to-yellow-500 flex items-center justify-center shadow-2xl border-2 border-white/30 backdrop-blur-sm">
+                        {project.category === "Graphic Design" ? (
+                          <Eye className="w-5 h-5 text-primary-foreground" />
+                        ) : (
+                          <Play className="w-5 h-5 text-primary-foreground ml-0.5" />
+                        )}
+                      </div>
+
+                      {/* Golden particles */}
+                      {[0, 1, 2, 3].map((i) => (
+                        <motion.div
+                          key={i}
+                          className="absolute w-1 h-1 bg-yellow-400 rounded-full"
+                          initial={{
+                            x: 0,
+                            y: 0,
+                            opacity: 0,
+                          }}
+                          animate={{
+                            x: Math.cos(i * 90) * 20,
+                            y: Math.sin(i * 90) * 20,
+                            opacity: [0, 1, 0],
+                          }}
+                          transition={{
+                            duration: 1.5,
+                            repeat: Infinity,
+                            delay: i * 0.2,
+                            repeatDelay: 1,
+                          }}
+                        />
+                      ))}
                     </div>
                   </motion.div>
                 </div>
 
                 <div className="p-5 space-y-2">
-                  <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
-                    {project.title}
-                  </h3>
+                  <div className="flex items-start justify-between">
+                    <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors">
+                      {project.title}
+                    </h3>
+                    <motion.div
+                      className="text-xs text-primary/70 font-medium"
+                      animate={{
+                        color:
+                          hoveredProject === project.id
+                            ? "rgba(212,175,55,0.9)"
+                            : "rgba(212,175,55,0.7)",
+                      }}
+                    >
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {project.duration}
+                      </span>
+                    </motion.div>
+                  </div>
                   <p className="text-muted-foreground text-sm line-clamp-2">
                     {project.description}
                   </p>
                   <div className="flex flex-wrap gap-1 pt-1">
                     {project.tags.map((tag) => (
-                      <span
+                      <motion.span
                         key={tag}
                         className="text-[10px] bg-primary/5 text-primary/80 rounded px-2 py-0.5 border border-primary/10"
+                        whileHover={{ scale: 1.05 }}
+                        transition={{ duration: 0.2 }}
                       >
                         {tag}
-                      </span>
+                      </motion.span>
                     ))}
                   </div>
                 </div>
@@ -357,14 +466,12 @@ const Showreel = () => {
               >
                 <div className="relative aspect-video bg-black flex items-center justify-center">
                   {selectedProject.category === "Graphic Design" ? (
-                    // Image Display
                     <img
                       src={selectedProject.image.src || selectedProject.image}
                       alt={selectedProject.title}
                       className="h-full w-auto object-contain max-h-[80vh]"
                     />
                   ) : selectedProject.videoPlatform === "youtube" ? (
-                    // YouTube
                     <iframe
                       width="100%"
                       height="100%"
@@ -375,7 +482,6 @@ const Showreel = () => {
                       className="rounded-t-lg"
                     />
                   ) : selectedProject.videoPlatform === "tiktok" ? (
-                    // TikTok
                     <iframe
                       width="100%"
                       height="100%"
@@ -386,7 +492,6 @@ const Showreel = () => {
                       className="rounded-t-lg"
                     />
                   ) : (
-                    // Fallback
                     <div className="text-white flex items-center justify-center h-full">
                       No video available
                     </div>
@@ -395,6 +500,18 @@ const Showreel = () => {
 
                 <div className="p-6 flex items-start justify-between gap-4">
                   <div className="space-y-2 w-full">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-sm font-medium bg-primary/10 text-primary rounded-full px-3 py-1">
+                        {selectedProject.category}
+                      </span>
+                      {selectedProject.duration && (
+                        <span className="text-sm text-muted-foreground flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          {selectedProject.duration}
+                        </span>
+                      )}
+                    </div>
+
                     <h3 className="text-2xl font-bold text-foreground">
                       {selectedProject.title}
                     </h3>
@@ -418,7 +535,7 @@ const Showreel = () => {
                           href={selectedProject.pdfUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 rounded-lg text-sm font-medium transition-all group"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/10 to-yellow-500/10 hover:from-primary/20 hover:to-yellow-500/20 text-primary border border-primary/20 rounded-lg text-sm font-medium transition-all group"
                         >
                           <FileText className="w-4 h-4 group-hover:scale-110 transition-transform" />
                           View Production Proposal
@@ -430,7 +547,7 @@ const Showreel = () => {
                   <motion.button
                     onClick={() => setSelectedProject(null)}
                     className="p-2 rounded-full bg-background/50 border border-primary/10 hover:bg-primary/10 transition-colors shrink-0"
-                    whileHover={{ scale: 1.1 }}
+                    whileHover={{ scale: 1.1, rotate: 90 }}
                     whileTap={{ scale: 0.9 }}
                   >
                     <X className="h-5 w-5" />

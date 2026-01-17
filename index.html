@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -22,6 +22,11 @@
       rel="stylesheet"
     />
 
+    <!-- Favicon (place favicon.ico in public folder) -->
+    <link rel="icon" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Open Graph Meta Tags -->
     <meta
       property="og:title"
       content="Nigus Dawit — Video Editor & Cinematographer"
@@ -31,24 +36,35 @@
       content="Crafting stories through motion and light. Cinematic portfolio of Nigus Dawit."
     />
     <meta property="og:type" content="website" />
-    <meta
-      property="og:image"
-      content="https://lovable.dev/opengraph-image-p98pqg.png"
-    />
+    <!-- Place your image in public/og-image.png -->
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:url" content="https://yourdomain.com" />
 
+    <!-- Twitter Meta Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Nigus Dawit — Cinematographer" />
     <meta
       name="twitter:description"
       content="Crafting stories through motion and light"
     />
-    <meta
-      name="twitter:image"
-      content="https://lovable.dev/opengraph-image-p98pqg.png"
-    />
+    <!-- Place your image in public/twitter-image.png -->
+    <meta name="twitter:image" content="/twitter-image.png" />
+
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="/site.webmanifest" />
   </head>
 
   <body>
+    <!-- Optional: Add a preloader image -->
+    <noscript>
+      <!-- Fallback for non-JS users -->
+      <img
+        src="/images/fallback.jpg"
+        alt="Nigus Dawit - Video Editor & Cinematographer"
+        style="display: block; margin: 0 auto; max-width: 100%"
+      />
+    </noscript>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
